@@ -3,7 +3,14 @@
 SyncSocial is a modern, feature-rich full-stack social media web application. Built with the MERN stack, it offers a fast, dynamic, and secure user experience for connecting, sharing posts, and managing profiles.
 
 ---
+__________________________________________________
+## 🔗 Quick Links
 
+<a href="https://usmanmuhammadtech-stack.github.io/sync-social_Rhombix" target="_blank">
+  <img src="https://img.shields.io/badge/🖥️%20Live%20Demo-Visit%20Website-blue?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Live Demo"/>
+</a>
+
+---______________________________________________________________
 ## 📸 Project Screenshots
 
 <table width="100%">
