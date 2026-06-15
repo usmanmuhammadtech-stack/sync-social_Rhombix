@@ -1,0 +1,23 @@
+# Block node_modules globally from both backend and frontend
+node_modules/
+**/node_modules/
+
+# Block environment variables and sensitive data
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+**/backend/.env
+**/frontend/.env
+
+# Block backend upload files (if any)
+backend/uploads/
+uploads/
+
+# Logs and production build files
+logs
+*.log
+npm-debug.log*
+dist/
+dist-ssr/

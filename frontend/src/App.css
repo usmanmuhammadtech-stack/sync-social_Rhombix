@@ -1,0 +1,16 @@
+/* Custom smooth utilities */
+body {
+  background-color: #F8F9FA; /* Soft light off-white background */
+  color: #1F2937; /* Soothing dark gray text, instead of harsh pure black */
+  font-family: 'Inter', sans-serif;
+}
+
+/* Smooth fade-in animation for pages */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
