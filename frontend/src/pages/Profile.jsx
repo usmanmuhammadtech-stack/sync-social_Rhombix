@@ -169,7 +169,7 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen feed-bg">
+      <div className="min-h-screen feed-bg dark:bg-gray-950">
         <Navbar />
         <div className="flex items-center justify-center h-64">
           <div className="flex items-center gap-3 text-gray-400">
@@ -187,10 +187,8 @@ const Profile = () => {
   const displayUser = {
     ...user,
     ...profileData,
-    // avatarUrl — profile.avatarUrl (nested) ya top-level
     avatarUrl: profileData?.profile?.avatarUrl || profileData?.avatarUrl || user?.profile?.avatarUrl || user?.avatarUrl,
     coverUrl:  profileData?.coverUrl || user?.coverUrl,
-    // bio, location etc — profile nested ya top-level
     bio:      profileData?.profile?.bio || profileData?.bio || user?.profile?.bio || user?.bio,
     location: profileData?.location || user?.location,
     website:  profileData?.website || user?.website,
@@ -198,7 +196,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen feed-bg">
+    <div className="min-h-screen feed-bg dark:bg-gray-950">
       <Toaster position="top-right" toastOptions={{
         style: { borderRadius: '12px', fontSize: '13px', fontWeight: '500', padding: '10px 16px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' },
         success: { style: { background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0' }, iconTheme: { primary: '#16a34a', secondary: '#f0fdf4' } },
@@ -211,7 +209,7 @@ const Profile = () => {
       <div className="max-w-4xl mx-auto px-4 py-6">
 
         {/* Profile Header Card */}
-        <div className="glass-card overflow-hidden mb-5">
+        <div className="glass-card dark:bg-gray-900 dark:border-gray-800 overflow-hidden mb-5">
 
           {/* Cover Photo */}
           <div className="relative h-44 cover-default">
@@ -260,19 +258,19 @@ const Profile = () => {
             </div>
 
             {/* Name + Bio */}
-            <h2 className="font-bold text-gray-900 text-xl tracking-tight">@{displayUser?.username || 'user'}</h2>
+            <h2 className="font-bold text-gray-900 dark:text-white text-xl tracking-tight">@{displayUser?.username || 'user'}</h2>
             <p className="text-xs text-gray-400 mt-0.5">{displayUser?.email || ''}</p>
-            {displayUser?.bio && <p className="text-sm text-gray-600 mt-2 leading-relaxed">{displayUser.bio}</p>}
+            {displayUser?.bio && <p className="text-sm text-gray-600 dark:text-gray-300 mt-2 leading-relaxed">{displayUser.bio}</p>}
 
             {/* Meta info */}
             <div className="flex flex-wrap gap-4 mt-3">
               {displayUser?.company && (
-                <span className="flex items-center gap-1.5 text-xs text-gray-500">
+                <span className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                   <FiBriefcase size={12} className="text-indigo-400" /> {displayUser.company}
                 </span>
               )}
               {displayUser?.location && (
-                <span className="flex items-center gap-1.5 text-xs text-gray-500">
+                <span className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
                   <FiMapPin size={12} className="text-rose-400" /> {displayUser.location}
                 </span>
               )}
@@ -287,27 +285,27 @@ const Profile = () => {
             </div>
 
             {/* Stats */}
-            <div className="flex gap-5 mt-4 pt-4 border-t border-gray-100">
+            <div className="flex gap-5 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
               <div className="text-center">
-                <p className="text-lg font-bold text-gray-800">{posts.length}</p>
+                <p className="text-lg font-bold text-gray-800 dark:text-white">{posts.length}</p>
                 <p className="text-[10px] text-gray-400">Posts</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-gray-800">{displayUser?.followers?.length || 0}</p>
+                <p className="text-lg font-bold text-gray-800 dark:text-white">{displayUser?.followers?.length || 0}</p>
                 <p className="text-[10px] text-gray-400">Followers</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-gray-800">{displayUser?.following?.length || 0}</p>
+                <p className="text-lg font-bold text-gray-800 dark:text-white">{displayUser?.following?.length || 0}</p>
                 <p className="text-[10px] text-gray-400">Following</p>
               </div>
             </div>
           </div>
 
           {/* Tabs */}
-          <div className="flex border-t border-gray-100 px-2">
+          <div className="flex border-t border-gray-100 dark:border-gray-800 px-2">
             {['posts', 'about', 'photos'].map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={`px-5 py-3 text-xs font-semibold capitalize transition-all cursor-pointer border-b-2 ${activeTab === tab ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>
+                className={`px-5 py-3 text-xs font-semibold capitalize transition-all cursor-pointer border-b-2 ${activeTab === tab ? 'border-indigo-500 text-indigo-600' : 'border-transparent text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'}`}>
                 {tab}
               </button>
             ))}
@@ -318,18 +316,18 @@ const Profile = () => {
         {activeTab === 'posts' && (
           <div className="space-y-4">
             {posts.length === 0 ? (
-              <div className="glass-card p-10 text-center">
-                <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <div className="glass-card dark:bg-gray-900 dark:border-gray-800 p-10 text-center">
+                <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <FiImage className="text-indigo-400 text-xl" />
                 </div>
-                <p className="text-gray-500 text-sm font-medium">Abhi tak koi post nahi</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Abhi tak koi post nahi</p>
                 <p className="text-gray-400 text-xs mt-1">Feed pe jao aur pehli post karo!</p>
               </div>
             ) : (
               posts.map(post => {
                 const isLikedByMe = post.likes?.includes(user?.id || user?._id);
                 return (
-                  <div key={post._id} className="post-card slide-up">
+                  <div key={post._id} className="post-card dark:bg-gray-900 dark:border-gray-800 slide-up">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         {displayUser?.avatarUrl ? (
@@ -340,7 +338,7 @@ const Profile = () => {
                           </div>
                         )}
                         <div>
-                          <h4 className="font-bold text-sm text-gray-900">@{displayUser?.username || 'user'}</h4>
+                          <h4 className="font-bold text-sm text-gray-900 dark:text-white">@{displayUser?.username || 'user'}</h4>
                           <p className="text-[10px] text-gray-400">{formatTimeAgo(post.createdAt)}</p>
                         </div>
                       </div>
@@ -348,19 +346,19 @@ const Profile = () => {
                       <div className="relative">
                         <button type="button"
                           onClick={() => setActiveMenu(activeMenu === post._id ? null : post._id)}
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all cursor-pointer">
+                          className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer">
                           <FiMoreHorizontal size={16} />
                         </button>
                         {activeMenu === post._id && (
-                          <div className="absolute right-0 top-8 bg-white border border-gray-100 rounded-xl shadow-lg z-10 overflow-hidden w-36 slide-up">
+                          <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg z-10 overflow-hidden w-36 slide-up">
                             <button type="button"
                               onClick={() => { setEditingPost(post._id); setEditContent(post.content); setActiveMenu(null); }}
-                              className="flex items-center gap-2 w-full px-4 py-2.5 text-xs text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-all cursor-pointer">
+                              className="flex items-center gap-2 w-full px-4 py-2.5 text-xs text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-all cursor-pointer">
                               <FiEdit2 size={13} /> Edit Post
                             </button>
                             <button type="button"
                               onClick={() => { handleDelete(post._id); setActiveMenu(null); }}
-                              className="flex items-center gap-2 w-full px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 transition-all cursor-pointer">
+                              className="flex items-center gap-2 w-full px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all cursor-pointer">
                               <FiTrash2 size={13} /> Delete Post
                             </button>
                           </div>
@@ -372,50 +370,51 @@ const Profile = () => {
                     {editingPost === post._id ? (
                       <div className="mb-4 space-y-2 slide-up">
                         <textarea value={editContent} onChange={e => setEditContent(e.target.value)}
-                          className="post-textarea h-20" />
+                          className="post-textarea dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 h-20" />
                         <div className="flex gap-2">
                           <button type="button" onClick={() => handleEditSavePost(post._id)} className="sync-btn text-xs px-4 py-2">Save</button>
                           <button type="button" onClick={() => setEditingPost(null)}
-                            className="text-xs px-4 py-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 cursor-pointer transition-all">Cancel</button>
+                            className="text-xs px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all">Cancel</button>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-600 text-sm leading-relaxed mb-4">{post.content}</p>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{post.content}</p>
                     )}
 
                     {post.imageUrl && (
-                      <div className="rounded-2xl overflow-hidden mb-4 border border-gray-100">
+                      <div className="rounded-2xl overflow-hidden mb-4 border border-gray-100 dark:border-gray-700">
                         <img src={post.imageUrl} alt="Post" className="w-full h-auto max-h-[500px] object-cover hover:scale-[1.02] transition-transform duration-500" />
                       </div>
                     )}
 
-                    <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                    <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-800">
                       <button type="button" onClick={() => handleLike(post._id)}
-                        className={`action-btn ${isLikedByMe ? 'action-btn-liked' : ''}`}>
+                        className={`action-btn ${isLikedByMe ? 'action-btn-liked' : 'dark:text-gray-400 dark:hover:bg-gray-800'}`}>
                         <FiHeart className={`text-sm ${isLikedByMe ? 'fill-current' : ''}`} />
                         <span>{post.likes?.length || 0}</span>
                       </button>
                       <button type="button"
                         onClick={() => setActiveCommentBox(activeCommentBox === post._id ? null : post._id)}
-                        className={`action-btn ${activeCommentBox === post._id ? 'action-btn-comment' : ''}`}>
+                        className={`action-btn ${activeCommentBox === post._id ? 'action-btn-comment' : 'dark:text-gray-400 dark:hover:bg-gray-800'}`}>
                         <FiMessageCircle className="text-sm" />
                         <span>{post.comments?.length || 0}</span>
                       </button>
                     </div>
 
                     {activeCommentBox === post._id && (
-                      <div className="mt-4 pt-4 border-t border-gray-100 space-y-3 slide-up">
+                      <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 space-y-3 slide-up">
                         <div className="max-h-40 overflow-y-auto space-y-2 pr-1">
                           {post.comments?.map((comment, index) => (
-                            <div key={index} className="bg-gray-50 rounded-xl p-3 text-xs border border-gray-100">
-                              <span className="font-bold text-gray-700">@{comment.user?.username || 'user'} </span>
-                              <span className="text-gray-500">{comment.text}</span>
+                            <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 text-xs border border-gray-100 dark:border-gray-700">
+                              <span className="font-bold text-gray-700 dark:text-gray-200">@{comment.user?.username || 'user'} </span>
+                              <span className="text-gray-500 dark:text-gray-400">{comment.text}</span>
                             </div>
                           ))}
                         </div>
                         <form onSubmit={(e) => handleCommentSubmit(e, post._id)} className="flex items-center gap-2">
                           <input type="text" value={commentText} onChange={(e) => setCommentText(e.target.value)}
-                            placeholder="Write a comment..." className="comment-input" />
+                            placeholder="Write a comment..."
+                            className="comment-input dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500" />
                           <button type="submit" className="comment-send-btn cursor-pointer"><FiSend size={13} /></button>
                         </form>
                       </div>
@@ -429,8 +428,8 @@ const Profile = () => {
 
         {/* ABOUT TAB */}
         {activeTab === 'about' && (
-          <div className="glass-card p-6 slide-up">
-            <h3 className="font-bold text-gray-800 text-sm mb-5">About</h3>
+          <div className="glass-card dark:bg-gray-900 dark:border-gray-800 p-6 slide-up">
+            <h3 className="font-bold text-gray-800 dark:text-white text-sm mb-5">About</h3>
             <div className="space-y-4">
               {[
                 { icon: <FiBriefcase size={15} />, label: 'Company', value: displayUser?.company },
@@ -438,11 +437,11 @@ const Profile = () => {
                 { icon: <FiLink size={15} />, label: 'Website', value: displayUser?.website },
                 { icon: <FiCalendar size={15} />, label: 'Joined', value: new Date(displayUser?.createdAt || Date.now()).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }) },
               ].map(({ icon, label, value }) => (
-                <div key={label} className="flex items-center gap-3 py-3 border-b border-gray-50 last:border-0">
+                <div key={label} className="flex items-center gap-3 py-3 border-b border-gray-50 dark:border-gray-800 last:border-0">
                   <span className="text-indigo-400">{icon}</span>
                   <div>
                     <p className="text-[10px] text-gray-400 font-medium">{label}</p>
-                    <p className="text-sm text-gray-700 mt-0.5">{value || <span className="text-gray-300 italic">Not set</span>}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-0.5">{value || <span className="text-gray-300 dark:text-gray-600 italic">Not set</span>}</p>
                   </div>
                 </div>
               ))}
@@ -451,7 +450,7 @@ const Profile = () => {
                   <span className="text-indigo-400 mt-0.5"><FiEdit2 size={15} /></span>
                   <div>
                     <p className="text-[10px] text-gray-400 font-medium">Bio</p>
-                    <p className="text-sm text-gray-700 mt-0.5 leading-relaxed">{displayUser.bio}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-0.5 leading-relaxed">{displayUser.bio}</p>
                   </div>
                 </div>
               )}
@@ -464,8 +463,8 @@ const Profile = () => {
 
         {/* PHOTOS TAB */}
         {activeTab === 'photos' && (
-          <div className="glass-card p-5 slide-up">
-            <h3 className="font-bold text-gray-800 text-sm mb-4">Photos</h3>
+          <div className="glass-card dark:bg-gray-900 dark:border-gray-800 p-5 slide-up">
+            <h3 className="font-bold text-gray-800 dark:text-white text-sm mb-4">Photos</h3>
             {posts.filter(p => p.imageUrl).length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-400 text-sm">Koi photo nahi mili</p>
@@ -473,7 +472,7 @@ const Profile = () => {
             ) : (
               <div className="grid grid-cols-3 gap-3">
                 {posts.filter(p => p.imageUrl).map(post => (
-                  <div key={post._id} className="aspect-square rounded-xl overflow-hidden border border-gray-100">
+                  <div key={post._id} className="aspect-square rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700">
                     <img src={post.imageUrl} alt="Post" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer" />
                   </div>
                 ))}
@@ -487,20 +486,20 @@ const Profile = () => {
       {/* Edit Profile Modal */}
       {editModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{background:'rgba(0,0,0,0.4)', backdropFilter:'blur(4px)'}}>
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl slide-up">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md p-6 shadow-2xl slide-up border border-gray-100 dark:border-gray-800">
             <div className="flex justify-between items-center mb-5">
-              <h3 className="font-bold text-gray-900 text-base">Edit Profile</h3>
-              <button onClick={() => setEditModalOpen(false)} className="text-gray-400 hover:text-gray-600 cursor-pointer p-1 rounded-lg hover:bg-gray-100 transition-all">
+              <h3 className="font-bold text-gray-900 dark:text-white text-base">Edit Profile</h3>
+              <button onClick={() => setEditModalOpen(false)} className="text-gray-400 hover:text-gray-600 cursor-pointer p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all">
                 <FiX size={18} />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-gray-500 mb-1.5 block">Bio</label>
+                <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">Bio</label>
                 <textarea value={editForm.bio} onChange={e => setEditForm(p => ({...p, bio: e.target.value}))}
                   placeholder="Apne baare mein kuch likho..."
-                  className="post-textarea h-20 text-sm" />
+                  className="post-textarea dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500 h-20 text-sm" />
               </div>
               {[
                 { key: 'company', label: 'Company', placeholder: 'Kahan kaam karte ho?', icon: <FiBriefcase size={13} /> },
@@ -508,13 +507,13 @@ const Profile = () => {
                 { key: 'website', label: 'Website', placeholder: 'https://yoursite.com', icon: <FiLink size={13} /> },
               ].map(({ key, label, placeholder, icon }) => (
                 <div key={key}>
-                  <label className="text-xs font-semibold text-gray-500 mb-1.5 block">{label}</label>
+                  <label className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5 block">{label}</label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-indigo-400">{icon}</span>
                     <input type="text" value={editForm[key]}
                       onChange={e => setEditForm(p => ({...p, [key]: e.target.value}))}
                       placeholder={placeholder}
-                      className="comment-input w-full pl-9" />
+                      className="comment-input dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500 w-full pl-9" />
                   </div>
                 </div>
               ))}
@@ -524,7 +523,7 @@ const Profile = () => {
               <button onClick={handleEditSave} className="sync-btn flex-1 py-2.5 text-sm flex items-center justify-center gap-2">
                 Save Changes
               </button>
-              <button onClick={() => setEditModalOpen(false)} className="outline-btn flex-1 py-2.5 text-sm">
+              <button onClick={() => setEditModalOpen(false)} className="outline-btn dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 flex-1 py-2.5 text-sm">
                 Cancel
               </button>
             </div>

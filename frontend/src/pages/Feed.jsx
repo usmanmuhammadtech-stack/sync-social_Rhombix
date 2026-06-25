@@ -1,4 +1,5 @@
-import { useContext, useState, useEffect, useRef } from 'react'; 
+import { useContext, useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
@@ -18,6 +19,8 @@ const formatTimeAgo = (dateString) => {
 
 const Feed = () => {
   const { user, token } = useContext(AuthContext);
+  const { postId } = useParams();
+  const highlightRef = useRef(null);
   const [posts, setPosts] = useState([]);
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,7 +36,6 @@ const Feed = () => {
   const fileInputRef = useRef(null);
   const config = { headers: { Authorization: `Bearer ${token}` } };
 
-  // Logged in user ka ID — sab formats
   const myUserId = (user?.id || user?._id || '').toString();
   const myUsername = (user?.username || '').toLowerCase();
 
@@ -57,6 +59,14 @@ const Feed = () => {
     const interval = setInterval(() => { fetchSuggestions(); }, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (postId && highlightRef.current) {
+      setTimeout(() => {
+        highlightRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 600);
+    }
+  }, [postId, posts]);
 
   const handleImageChange = (e) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -119,9 +129,7 @@ const Feed = () => {
       setPosts((prevPosts) => prevPosts.map(post => post._id === postId ? { ...post, comments: res.data } : post));
       setCommentText('');
       toast.success("Comment post ho gaya!", { duration: 2000 });
-    } catch (err) {
-      toast.error("Comment post nahi ho saka!");
-    }
+    } catch (err) { toast.error("Comment post nahi ho saka!"); }
   };
 
   const handleDelete = async (postId) => {
@@ -153,25 +161,13 @@ const Feed = () => {
     } catch (err) { toast.error("Kuch ghalat ho gaya!"); }
   };
 
-  // Post ownership check function
-  const checkIsMyPost = (post) => {
-    if (!post?.user) return false;
-    // Username se check
-    const postUsername = (post.user?.username || '').toLowerCase();
-    if (myUsername && postUsername && myUsername === postUsername) return true;
-    // ID se check
-    const postOwnerId = (post.user?._id || post.user?.id || post.user || '').toString();
-    if (myUserId && postOwnerId && myUserId === postOwnerId) return true;
-    return false;
-  };
-
   return (
-    <div className="min-h-screen feed-bg">
+    <div className="min-h-screen feed-bg dark:bg-gray-950">
       <Toaster position="top-right" toastOptions={{
         style: { borderRadius: '12px', fontSize: '13px', fontWeight: '500', padding: '10px 16px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' },
-        success: { style: { background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0' }, iconTheme: { primary: '#16a34a', secondary: '#f0fdf4' } },
-        error: { style: { background: '#fff1f2', color: '#be123c', border: '1px solid #fecdd3' }, iconTheme: { primary: '#e11d48', secondary: '#fff1f2' } },
-        loading: { style: { background: '#eef2ff', color: '#4338ca', border: '1px solid #c7d2fe' }, iconTheme: { primary: '#6366f1', secondary: '#eef2ff' } },
+        success: { style: { background: '#f0fdf4', color: '#15803d', border: '1px solid #bbf7d0' } },
+        error: { style: { background: '#fff1f2', color: '#be123c', border: '1px solid #fecdd3' } },
+        loading: { style: { background: '#eef2ff', color: '#4338ca', border: '1px solid #c7d2fe' } },
       }} />
 
       <Navbar />
@@ -180,7 +176,7 @@ const Feed = () => {
 
         {/* LEFT COLUMN */}
         <div className="hidden md:block lg:col-span-1">
-          <div className="glass-card p-6 sticky top-24">
+          <div className="glass-card dark:bg-gray-900 dark:border-gray-800 p-6 sticky top-24">
             <div className="flex flex-col items-center text-center">
               <div className="avatar-ring mb-3">
                 {user?.profile?.avatarUrl && !user.profile.avatarUrl.includes('placeholder') ? (
@@ -191,21 +187,21 @@ const Feed = () => {
                   </div>
                 )}
               </div>
-              <h3 className="font-bold text-gray-900 text-base tracking-tight">@{user?.username || 'user'}</h3>
+              <h3 className="font-bold text-gray-900 dark:text-white text-base tracking-tight">@{user?.username || 'user'}</h3>
               <p className="text-xs text-gray-400 mt-0.5 truncate max-w-full px-2">{user?.email || ''}</p>
-              <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+              <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-0.5 rounded-full border border-emerald-100 dark:border-emerald-800">
                 <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse inline-block"></span>
                 Active
               </span>
             </div>
-            <div className="my-5 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+            <div className="my-5 h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-gray-700 to-transparent" />
             <div className="grid grid-cols-2 gap-2">
-              <div className="stat-pill">
-                <p className="text-lg font-bold text-gray-800">{user?.followers?.length || 0}</p>
+              <div className="stat-pill dark:bg-gray-800 dark:border-gray-700">
+                <p className="text-lg font-bold text-gray-800 dark:text-white">{user?.followers?.length || 0}</p>
                 <p className="text-[10px] text-gray-400 mt-0.5">Followers</p>
               </div>
-              <div className="stat-pill">
-                <p className="text-lg font-bold text-gray-800">{myFollowing.length}</p>
+              <div className="stat-pill dark:bg-gray-800 dark:border-gray-700">
+                <p className="text-lg font-bold text-gray-800 dark:text-white">{myFollowing.length}</p>
                 <p className="text-[10px] text-gray-400 mt-0.5">Following</p>
               </div>
             </div>
@@ -216,7 +212,7 @@ const Feed = () => {
         <div className="md:col-span-2 space-y-4">
 
           {/* Create Post */}
-          <form onSubmit={handleCreatePost} className="glass-card p-5">
+          <form onSubmit={handleCreatePost} className="glass-card dark:bg-gray-900 dark:border-gray-800 p-5">
             <div className="flex space-x-3">
               {user?.profile?.avatarUrl && !user.profile.avatarUrl.includes('placeholder') ? (
                 <img src={user.profile.avatarUrl} alt="Avatar" className="w-10 h-10 rounded-full object-cover shrink-0 shadow-md ring-2 ring-indigo-100" />
@@ -227,12 +223,10 @@ const Feed = () => {
               )}
               <div className="w-full space-y-3">
                 <textarea
-                  id="post-content-input"
-                  name="postContent"
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   placeholder="What's syncing in your mind?"
-                  className="post-textarea"
+                  className="post-textarea dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
                 />
                 {previewUrl && (
                   <div className="relative rounded-2xl overflow-hidden border border-gray-100 slide-up">
@@ -245,13 +239,13 @@ const Feed = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
+            <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
               <button type="button" onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 text-xs font-medium text-gray-500 hover:text-indigo-600 px-3 py-2 rounded-xl hover:bg-indigo-50 transition-all cursor-pointer">
+                className="flex items-center gap-2 text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-indigo-600 px-3 py-2 rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-800 transition-all cursor-pointer">
                 <FiImage className="text-emerald-500 text-base" />
                 Add Photo
               </button>
-              <input ref={fileInputRef} type="file" name="image" accept="image/*" onChange={handleImageChange} className="hidden" />
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
               <button type="submit" disabled={loading} className="sync-btn">
                 {loading ? (
                   <span className="flex items-center gap-2">
@@ -271,17 +265,16 @@ const Feed = () => {
           {/* Posts */}
           <div className="space-y-4">
             {posts.length === 0 ? (
-              <div className="glass-card p-10 text-center">
-                <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <div className="glass-card dark:bg-gray-900 dark:border-gray-800 p-10 text-center">
+                <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <FiZap className="text-indigo-400 text-xl" />
                 </div>
-                <p className="text-gray-600 text-sm font-medium">No posts syncing yet</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm font-medium">No posts syncing yet</p>
                 <p className="text-gray-400 text-xs mt-1">Be the first to share something!</p>
               </div>
             ) : (
               posts.map((post) => {
                 const isLikedByMe = post.likes?.includes(user?.id || user?._id);
-                // User latest value se check karo — component level variables stale ho sakte hain
                 const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
                 const currentUsername = (currentUser?.username || '').toLowerCase();
                 const currentId = (currentUser?.id || currentUser?._id || '').toString();
@@ -290,14 +283,22 @@ const Feed = () => {
                 const isMyPost = (currentUsername && postUsername && currentUsername === postUsername) ||
                                  (currentId && postOwnerId && currentId === postOwnerId);
                 return (
-                  <div key={post._id} className="post-card slide-up">
+                  <div
+                    key={post._id}
+                    ref={postId === post._id ? highlightRef : null}
+                    className={`post-card dark:bg-gray-900 dark:border-gray-800 slide-up ${postId === post._id ? 'ring-2 ring-indigo-400 ring-offset-2' : ''}`}>
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 post-avatar rounded-full flex items-center justify-center font-bold text-sm text-white shadow-md">
-                          {post.user?.username ? post.user.username.charAt(0).toUpperCase() : 'U'}
-                        </div>
+                        {post.user?.profile?.avatarUrl && !post.user.profile.avatarUrl.includes('placeholder') ? (
+                          <img src={post.user.profile.avatarUrl} alt="avatar"
+                            className="w-10 h-10 rounded-full object-cover shadow-md ring-2 ring-indigo-100" />
+                        ) : (
+                          <div className="w-10 h-10 post-avatar rounded-full flex items-center justify-center font-bold text-sm text-white shadow-md">
+                            {post.user?.username ? post.user.username.charAt(0).toUpperCase() : 'U'}
+                          </div>
+                        )}
                         <div>
-                          <h4 className="font-bold text-sm text-gray-900">@{post.user?.username || 'unknown_user'}</h4>
+                          <h4 className="font-bold text-sm text-gray-900 dark:text-white">@{post.user?.username || 'unknown_user'}</h4>
                           <p className="text-[10px] text-gray-400">{formatTimeAgo(post.createdAt)}</p>
                         </div>
                       </div>
@@ -305,19 +306,19 @@ const Feed = () => {
                         <div className="relative">
                           <button type="button"
                             onClick={() => setActiveMenu(activeMenu === post._id ? null : post._id)}
-                            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all cursor-pointer">
+                            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all cursor-pointer">
                             <FiMoreHorizontal size={16} />
                           </button>
                           {activeMenu === post._id && (
-                            <div className="absolute right-0 top-8 bg-white border border-gray-100 rounded-xl shadow-lg z-10 overflow-hidden w-36 slide-up">
+                            <div className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg z-10 overflow-hidden w-36 slide-up">
                               <button type="button"
                                 onClick={() => { setEditingPost(post._id); setEditContent(post.content); setActiveMenu(null); }}
-                                className="flex items-center gap-2 w-full px-4 py-2.5 text-xs text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-all cursor-pointer">
+                                className="flex items-center gap-2 w-full px-4 py-2.5 text-xs text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 transition-all cursor-pointer">
                                 <FiEdit2 size={13} /> Edit Post
                               </button>
                               <button type="button"
                                 onClick={() => { handleDelete(post._id); setActiveMenu(null); }}
-                                className="flex items-center gap-2 w-full px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 transition-all cursor-pointer">
+                                className="flex items-center gap-2 w-full px-4 py-2.5 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all cursor-pointer">
                                 <FiTrash2 size={13} /> Delete Post
                               </button>
                             </div>
@@ -329,57 +330,53 @@ const Feed = () => {
                     {editingPost === post._id ? (
                       <div className="mb-4 space-y-2 slide-up">
                         <textarea value={editContent} onChange={e => setEditContent(e.target.value)}
-                          className="post-textarea h-20" />
+                          className="post-textarea dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 h-20" />
                         <div className="flex gap-2">
                           <button type="button" onClick={() => handleEditSave(post._id)} className="sync-btn text-xs px-4 py-2">Save</button>
                           <button type="button" onClick={() => setEditingPost(null)}
-                            className="text-xs px-4 py-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 cursor-pointer transition-all">Cancel</button>
+                            className="text-xs px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all">Cancel</button>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-600 text-sm leading-relaxed mb-4">{post.content}</p>
+                      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">{post.content}</p>
                     )}
 
                     {post.imageUrl && (
-                      <div className="rounded-2xl overflow-hidden mb-4 border border-gray-100">
+                      <div className="rounded-2xl overflow-hidden mb-4 border border-gray-100 dark:border-gray-700">
                         <img src={post.imageUrl} alt="Post media"
                           className="w-full h-auto max-h-[500px] object-cover hover:scale-[1.02] transition-transform duration-500" />
                       </div>
                     )}
 
-                    <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+                    <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-800">
                       <button type="button" onClick={() => handleLike(post._id)}
-                        className={`action-btn ${isLikedByMe ? 'action-btn-liked' : ''}`}>
+                        className={`action-btn ${isLikedByMe ? 'action-btn-liked' : 'dark:text-gray-400 dark:hover:bg-gray-800'}`}>
                         <FiHeart className={`text-sm ${isLikedByMe ? 'fill-current' : ''}`} />
                         <span>{post.likes?.length || 0}</span>
                       </button>
                       <button type="button"
                         onClick={() => setActiveCommentBox(activeCommentBox === post._id ? null : post._id)}
-                        className={`action-btn ${activeCommentBox === post._id ? 'action-btn-comment' : ''}`}>
+                        className={`action-btn ${activeCommentBox === post._id ? 'action-btn-comment' : 'dark:text-gray-400 dark:hover:bg-gray-800'}`}>
                         <FiMessageCircle className="text-sm" />
                         <span>{post.comments?.length || 0}</span>
                       </button>
                     </div>
 
                     {activeCommentBox === post._id && (
-                      <div className="mt-4 pt-4 border-t border-gray-100 space-y-3 slide-up">
+                      <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 space-y-3 slide-up">
                         <div className="max-h-40 overflow-y-auto space-y-2 pr-1">
                           {post.comments?.map((comment, index) => (
-                            <div key={index} className="bg-gray-50 rounded-xl p-3 text-xs border border-gray-100">
-                              <span className="font-bold text-gray-700">@{comment.user?.username || 'user'} </span>
-                              <span className="text-gray-500">{comment.text}</span>
+                            <div key={index} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 text-xs border border-gray-100 dark:border-gray-700">
+                              <span className="font-bold text-gray-700 dark:text-gray-200">@{comment.user?.username || 'user'} </span>
+                              <span className="text-gray-500 dark:text-gray-400">{comment.text}</span>
                             </div>
                           ))}
                         </div>
                         <form onSubmit={(e) => handleCommentSubmit(e, post._id)} className="flex items-center gap-2">
-                          <input
-                            id={`comment-input-${post._id}`}
-                            name={`comment_${post._id}`}
-                            type="text"
-                            value={commentText}
+                          <input type="text" value={commentText}
                             onChange={(e) => setCommentText(e.target.value)}
                             placeholder="Write a comment..."
-                            className="comment-input"
+                            className="comment-input dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 dark:placeholder-gray-500"
                           />
                           <button type="submit" className="comment-send-btn cursor-pointer">
                             <FiSend size={13} />
@@ -396,9 +393,9 @@ const Feed = () => {
 
         {/* RIGHT COLUMN */}
         <div className="hidden lg:block lg:col-span-1">
-          <div className="glass-card p-4 sticky top-24">
-            <h3 className="font-bold text-gray-800 text-sm mb-4 px-1 flex items-center gap-2">
-              <span className="w-5 h-5 bg-indigo-100 rounded-lg flex items-center justify-center">
+          <div className="glass-card dark:bg-gray-900 dark:border-gray-800 p-4 sticky top-24">
+            <h3 className="font-bold text-gray-800 dark:text-white text-sm mb-4 px-1 flex items-center gap-2">
+              <span className="w-5 h-5 bg-indigo-100 dark:bg-indigo-900/40 rounded-lg flex items-center justify-center">
                 <FiUserPlus size={11} className="text-indigo-600" />
               </span>
               Who to follow
@@ -407,13 +404,18 @@ const Feed = () => {
               {suggestions.map((item) => {
                 const isFollowing = myFollowing.includes(item._id);
                 return (
-                  <div key={item._id} className="flex items-center justify-between gap-2 p-2 rounded-xl hover:bg-gray-50 transition-all">
+                  <div key={item._id} className="flex items-center justify-between gap-2 p-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 suggestion-avatar rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-sm">
-                        {item.username ? item.username.charAt(0).toUpperCase() : 'U'}
-                      </div>
+                      {item.profile?.avatarUrl && !item.profile.avatarUrl.includes('placeholder') ? (
+                        <img src={item.profile.avatarUrl} alt="avatar"
+                          className="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm" />
+                      ) : (
+                        <div className="w-8 h-8 suggestion-avatar rounded-full flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-sm">
+                          {item.username ? item.username.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                      )}
                       <div className="truncate">
-                        <h4 className="font-bold text-xs text-gray-800 truncate">@{item.username || 'user'}</h4>
+                        <h4 className="font-bold text-xs text-gray-800 dark:text-white truncate">@{item.username || 'user'}</h4>
                         <p className="text-[10px] text-gray-400 truncate">{item.email || ''}</p>
                       </div>
                     </div>
@@ -437,6 +439,12 @@ const Feed = () => {
             radial-gradient(ellipse at 15% 15%, rgba(99,102,241,0.07) 0%, transparent 55%),
             radial-gradient(ellipse at 85% 85%, rgba(139,92,246,0.06) 0%, transparent 55%);
           min-height: 100vh;
+        }
+        .dark .feed-bg, .dark.feed-bg {
+          background: #030712;
+          background-image:
+            radial-gradient(ellipse at 15% 15%, rgba(99,102,241,0.1) 0%, transparent 55%),
+            radial-gradient(ellipse at 85% 85%, rgba(139,92,246,0.08) 0%, transparent 55%);
         }
         .glass-card {
           background: rgba(255,255,255,0.96);
